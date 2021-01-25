@@ -158,13 +158,13 @@ cdef class DrWav:
     def sample_rate(self):
         return self._wav.sampleRate
 
-    def read(self, nframes=None, sample_format='i'):
+    def read(self, drwav_uint64 nframes=0, sample_format='i'):
         cdef drwav_uint64 frames_read = 0
 
         if sample_format not in self.supported_formats:
             raise ValueError("Sample format '%s' not supported." % sample_format)
 
-        if nframes is None:
+        if nframes == 0:
             nframes = self._wav.totalPCMFrameCount
 
         cdef array.array frames = array.array(sample_format)
