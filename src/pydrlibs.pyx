@@ -23,13 +23,13 @@ cdef extern from "dr_libs/dr_wav.h":
 
     # Enums
     ctypedef enum drwav_container:
-        drwav_container_riff = 0
-        drwav_container_w64 = 1
-        drwav_container_rf64 = 2
+        drwav_container_riff,
+        drwav_container_w64,
+        drwav_container_rf64
 
     ctypedef enum drwav_seek_origin:
-        drwav_seek_origin_start = 0
-        drwav_seek_origin_current = 1
+        drwav_seek_origin_start,
+        drwav_seek_origin_current
 
     ctypedef struct drwav_allocation_callbacks:
         void* pUserData;
@@ -130,9 +130,12 @@ cdef extern from "dr_libs/dr_wav.h":
     drwav_result drwav_uninit(drwav* pWav)
 
 
+cpdef enum sample_format:
+    SAMPLE_FORMAT_S32, SAMPLE_FORMAT_F32
+
+
 cdef class DrWav:
     cdef drwav _wav
-    supported_formats = ('i', 'f')
 
     def __cinit__(self, filename):
         ret = drwav_init_file(&self._wav, filename.encode("utf-8"), NULL)
@@ -158,24 +161,26 @@ cdef class DrWav:
     def sample_rate(self):
         return self._wav.sampleRate
 
-    def read(self, drwav_uint64 nframes=0, sample_format='i'):
+    def read(self, drwav_uint64 nframes=0, sample_format fmt=SAMPLE_FORMAT_S32):
         cdef drwav_uint64 frames_read = 0
-
-        if sample_format not in self.supported_formats:
-            raise ValueError("Sample format '%s' not supported." % sample_format)
+        cdef array.array frames
 
         if nframes == 0:
             nframes = self._wav.totalPCMFrameCount
 
-        cdef array.array frames = array.array(sample_format)
+        if fmt == SAMPLE_FORMAT_S32:
+            frames = array.array('i')
+        elif fmt == SAMPLE_FORMAT_F32:
+            frames = array.array('f')
+        else:
+            raise ValueError("Sample format %d not supported" % fmt)
+
         array.resize(frames, nframes * self._wav.channels)
 
-        if sample_format == 'i':
-            frames_read = drwav_read_pcm_frames_s32(&self._wav, <drwav_uint64>nframes,
-                                                    frames.data.as_ints)
-        elif sample_format == 'f':
-            frames_read = drwav_read_pcm_frames_f32(&self._wav, <drwav_uint64>nframes,
-                                                    frames.data.as_floats)
+        if fmt == SAMPLE_FORMAT_S32:
+            frames_read = drwav_read_pcm_frames_s32(&self._wav, nframes, frames.data.as_ints)
+        elif fmt == SAMPLE_FORMAT_F32:
+            frames_read = drwav_read_pcm_frames_f32(&self._wav, nframes, frames.data.as_floats)
 
         if frames_read < nframes:
             array.resize(frames, frames_read * self._wav.channels)
