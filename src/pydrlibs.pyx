@@ -91,7 +91,7 @@ cdef extern from "dr_libs/dr_wav.h":
         # The bits per sample. Will be set to something like 16, 24, etc.
         drwav_uint16 bitsPerSample
         # Equal to fmt.formatTag, or the value specified by fmt.subFormat if fmt.formatTag is equal
-        #  to 65534 (WAVE_FORMAT_EXTENSIBLE).
+        # to 65534 (WAVE_FORMAT_EXTENSIBLE).
         drwav_uint16 translatedFormatTag
         # The total number of PCM frames making up the audio data.
         drwav_uint64 totalPCMFrameCount
@@ -143,8 +143,16 @@ cdef class DrWav:
         drwav_uninit(&self._wav)
 
     @property
+    def bits_per_sample(self):
+        return self._wav.bitsPerSample
+
+    @property
     def channels(self):
         return self._wav.channels
+
+    @property
+    def nframes(self):
+        return self._wav.totalPCMFrameCount
 
     @property
     def sample_rate(self):
