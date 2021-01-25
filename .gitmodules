@@ -1,0 +1,3 @@
+[submodule "src/dr_libs"]
+	path = src/dr_libs
+	url = https://github.com/mackron/dr_libs
