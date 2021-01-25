@@ -134,7 +134,7 @@ cdef class DrWav:
     cdef drwav _wav
     supported_formats = ('i', 'f')
 
-    def __init__(self, filename):
+    def __cinit__(self, filename):
         ret = drwav_init_file(&self._wav, filename.encode("utf-8"), NULL)
         if not ret:
             raise IOError("Could not open %s." % filename)
