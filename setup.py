@@ -11,7 +11,7 @@ except ImportError:
 SRC_DIR = "src"
 MODULE = "dr_libs"
 
-# Set up options for compiling the _rtmidi Extension
+# Set up options for compiling the Extension
 if cythonize:
     sources = [join(SRC_DIR, MODULE + ".pyx")]
 elif exists(join(SRC_DIR, MODULE + ".c")):
