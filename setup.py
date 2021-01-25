@@ -1,4 +1,4 @@
-from os.path import join
+from os.path import exists, join
 from setuptools import Extension, setup
 
 try:
@@ -7,20 +7,21 @@ except ImportError:
     cythonize = None
 
 SRC_DIR = "src"
+MODULE = "pydrlibs"
 
 # Set up options for compiling the _rtmidi Extension
 if cythonize:
-    sources = [join(SRC_DIR, "pydrlibs.pyx")]
-elif exists(join(SRC_DIR, "pydrlibs.c")):
+    sources = [join(SRC_DIR, MODULE + ".pyx")]
+elif exists(join(SRC_DIR, MODULE + ".c")):
     cythonize = lambda x: x  # noqa
-    sources = [join(SRC_DIR, "pydrlibs.c")]
+    sources = [join(SRC_DIR, MODULE + ".c")]
 else:
     raise RuntimeError("Could not import Cython. Cython is required to compile "
                        "the Cython source into the C extension source.")
 
 extensions = [
     Extension(
-        "pydrlibs",
+        MODULE,
         sources=sources,
         language="c",
         define_macros=[('DR_WAV_IMPLEMENTATION', None)],
@@ -29,5 +30,5 @@ extensions = [
 ]
 
 setup(
-    ext_modules = cythonize(extensions)
+    ext_modules=cythonize(extensions)
 )

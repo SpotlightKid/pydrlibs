@@ -1,6 +1,7 @@
 build/
 dist/
 *.egg-info
+*.dist-info
 __pycache__
 *.py[do]
 src/pydrlibs.c
