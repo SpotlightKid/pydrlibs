@@ -4,5 +4,5 @@ dist/
 *.dist-info
 __pycache__
 *.py[do]
-src/pydrlibs.c
+src/dr_libs.c
 examples/dr_wav_simple

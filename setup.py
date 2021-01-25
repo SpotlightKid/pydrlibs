@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from os.path import exists, join
 from setuptools import Extension, setup
 
@@ -7,7 +9,7 @@ except ImportError:
     cythonize = None
 
 SRC_DIR = "src"
-MODULE = "pydrlibs"
+MODULE = "dr_libs"
 
 # Set up options for compiling the _rtmidi Extension
 if cythonize:

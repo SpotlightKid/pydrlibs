@@ -1,4 +1,4 @@
-# pydrlibs.pxd
+# dr_libs.pxd
 #
 # cython: language_level=3
 
