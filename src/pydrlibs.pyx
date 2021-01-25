@@ -2,20 +2,19 @@
 #
 # cython: language_level=3
 
+from cpython cimport array
+import array
+
+
 cdef extern from "dr_libs/dr_wav.h":
     # custom types
-    ctypedef signed char drwav_int8
     ctypedef unsigned char drwav_uint8
-    ctypedef signed short drwav_int16
     ctypedef unsigned short drwav_uint16
-    ctypedef signed int drwav_int32
+    ctypedef int drwav_int32
     ctypedef unsigned int drwav_uint32
-    ctypedef drwav_int32 drwav_result
-    ctypedef drwav_uint8 drwav_bool8
-    ctypedef drwav_uint32 drwav_bool32
-    ctypedef signed long long drwav_int64
+    ctypedef int drwav_result
+    ctypedef unsigned int drwav_bool32
     ctypedef unsigned long long drwav_uint64
-    ctypedef drwav_uint64 drwav_uintptr
 
     # callbacks
     ctypedef size_t (* drwav_read_proc)(void* pUserData, void* pBufferOut, size_t bytesToRead)
@@ -109,7 +108,7 @@ cdef extern from "dr_libs/dr_wav.h":
         # Keeps track of whether or not the wav writer was initialized in sequential mode.
         drwav_bool32 isSequentialWrite;
 
-
+    # Functions from the API we want to call using the types declared above
     drwav_bool32 drwav_init(
         drwav* pWav,
         drwav_read_proc onRead,
@@ -120,11 +119,20 @@ cdef extern from "dr_libs/dr_wav.h":
         drwav* pWav,
         const char* filename,
         const drwav_allocation_callbacks* pAllocationCallbacks)
+    drwav_uint64 drwav_read_pcm_frames_s32(
+        drwav* pWav,
+        drwav_uint64 framesToRead,
+        drwav_int32* pBufferOut)
+    drwav_uint64 drwav_read_pcm_frames_f32(
+        drwav* pWav,
+        drwav_uint64 framesToRead,
+        float* pBufferOut)
     drwav_result drwav_uninit(drwav* pWav)
 
 
 cdef class DrWav:
     cdef drwav _wav
+    supported_formats = ('i', 'f')
 
     def __init__(self, filename):
         ret = drwav_init_file(&self._wav, filename.encode("utf-8"), NULL)
@@ -135,5 +143,33 @@ cdef class DrWav:
         drwav_uninit(&self._wav)
 
     @property
+    def channels(self):
+        return self._wav.channels
+
+    @property
     def sample_rate(self):
         return self._wav.sampleRate
+
+    def read(self, nframes=None, sample_format='i'):
+        cdef drwav_uint64 frames_read = 0
+
+        if sample_format not in self.supported_formats:
+            raise ValueError("Sample format '%s' not supported." % sample_format)
+
+        if nframes is None:
+            nframes = self._wav.totalPCMFrameCount
+
+        cdef array.array frames = array.array(sample_format)
+        array.resize(frames, nframes * self._wav.channels)
+
+        if sample_format == 'i':
+            frames_read = drwav_read_pcm_frames_s32(&self._wav, <drwav_uint64>nframes,
+                                                    frames.data.as_ints)
+        elif sample_format == 'f':
+            frames_read = drwav_read_pcm_frames_f32(&self._wav, <drwav_uint64>nframes,
+                                                    frames.data.as_floats)
+
+        if frames_read < nframes:
+            array.resize(frames, frames_read * self._wav.channels)
+
+        return frames
