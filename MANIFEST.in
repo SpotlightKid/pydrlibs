@@ -1,0 +1,9 @@
+include LICENSE
+include Makefile
+
+include src/dr_libs/*.h
+
+recursive-include examples *.c *.py
+recursive-include tests *.py *.wav
+
+exclude .gitmodules
