@@ -5,7 +5,7 @@ PREFIX ?= /usr/local
 PYTHON ?= python3
 TWINE ?= twine
 
-.PHONY: all build flake8 install install-user
+.PHONY: all build clean examples flake8 install install-user
 
 all:
 	@echo 'make install: install $(PROJECT) to $(PREFIX) (needs root)'
@@ -13,6 +13,9 @@ all:
 
 clean:
 	-rm -rf build/ $(PACKAGE)*.so $(PROJECT).egg-info tests/__pycache__
+
+examples:
+	$(MAKE) -C examples
 
 flake8:
 	flake8 $(PACKAGE)
