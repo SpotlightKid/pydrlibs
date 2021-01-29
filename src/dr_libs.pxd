@@ -50,6 +50,13 @@ cdef extern from "dr_libs/dr_wav.h":
         drwav_uint16 validBitsPerSample
         drwav_uint8 subFormat[16]
 
+    ctypedef struct drwav_data_format:
+        drwav_container container  # RIFF, W64, RF64
+        drwav_uint32 format        # DR_WAVE_FORMAT_*
+        drwav_uint32 channels
+        drwav_uint32 sampleRate
+        drwav_uint32 bitsPerSample
+
     ctypedef struct drwav:
         # A pointer to the function to call when more data is needed.
         drwav_read_proc onRead
@@ -83,6 +90,18 @@ cdef extern from "dr_libs/dr_wav.h":
         drwav* pWav,
         const char* filename,
         const drwav_allocation_callbacks* pAllocationCallbacks)
+    drwav_bool32 drwav_init_write(
+        drwav* pWav,
+        const drwav_data_format* pFormat,
+        drwav_write_proc onWrite,
+        drwav_seek_proc onSeek,
+        void* pUserData,
+        const drwav_allocation_callbacks* pAllocationCallbacks)
+    drwav_bool32 drwav_init_file_write(
+        drwav* pWav,
+        const char* filename,
+        const drwav_data_format* pFormat,
+        const drwav_allocation_callbacks* pAllocationCallbacks)
     drwav_uint64 drwav_read_pcm_frames_s16(
         drwav* pWav,
         drwav_uint64 framesToRead,
@@ -98,8 +117,12 @@ cdef extern from "dr_libs/dr_wav.h":
     drwav_bool32 drwav_seek_to_pcm_frame(
         drwav* pWav,
         drwav_uint64 targetFrameIndex)
+    size_t drwav_write_raw(
+        drwav* pWav,
+        size_t bytesToWrite,
+        const void* pData)
+    drwav_uint64 drwav_write_pcm_frames(
+        drwav* pWav,
+        drwav_uint64 framesToWrite,
+        const void* pData)
     drwav_result drwav_uninit(drwav* pWav)
-
-
-cpdef enum sample_format:
-    SAMPLE_FORMAT_S16, SAMPLE_FORMAT_S32, SAMPLE_FORMAT_F32

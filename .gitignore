@@ -9,3 +9,6 @@ examples/dr_wav_simple
 dr_libs*.dll
 dr_libs*.pyd
 dr_libs*.so
+
+# test output data
+tests/output

@@ -1,6 +1,6 @@
 # pydrlibs
 
-Python bindings for the [dr_libs] audio decoding libraries
+Python bindings for the [dr_libs] audio file decoding libraries
 
 **Note:** *This project is in very early stages of development and probably
 not very useful yet and may even simply not work.*
@@ -33,7 +33,7 @@ print(wav.nframes)
 # Read sample data as single-precision floats.
 # Returns array.array('f') instance.
 # Channels are interleaved.
-data = wav.read(fmt=dr_libs.SAMPLE_FORMAT_F32)
+data = wav.read(fmt=dr_libs.sample_format.F32)
 print(len(data))  # Should return (wav.nframes * wav.channels)
 ```
 
@@ -54,6 +54,10 @@ At run-time:
 
 * [Python] 3.6+
 
+For running the unit tests:
+
+* [pytest] >= 3.0
+
 
 ## License
 
@@ -65,7 +69,8 @@ This software is released under the [MIT License](./LICENSE).
 This software was written by *Christopher Arndt*.
 
 
-[python]: https://www.python.org/downloads/
 [cython]: https://cython.org/
-[setuptools]: https://pypi.org/project/setuptools/
 [dr_libs]: https://github.com/mackron/dr_libs
+[pytest]: https://pypi.org/project/pytest/
+[python]: https://www.python.org/downloads/
+[setuptools]: https://pypi.org/project/setuptools/
