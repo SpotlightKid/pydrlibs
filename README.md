@@ -49,7 +49,7 @@ from random import randrange
 import dr_libs
 
 wav = dr_libs.DrWav(
-    '/path/to/audio.wav',
+    'sine.wav',
     mode='w',
     channels=1,
     sample_rate=48000,
@@ -60,7 +60,7 @@ wav = dr_libs.DrWav(
 # for channels, bits_per_sample and format_tag the values used above are the defaults
 
 # generate 1 second of full-scale white noise at 48 kHz
-data = array.array('h', (randrange(-32768, 32767) for i in range(48000)))
+data = array.array('h', (randrange(-32768, 32768) for i in range(48000)))
 
 # write to file
 wav.write(data)
