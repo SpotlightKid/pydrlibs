@@ -56,15 +56,17 @@ wav = dr_libs.DrWav(
     bits_per_sample=16,
     format_tag=dr_libs.PCM)
 
-# default sample rate is 44100 Hz
-# for channels, bits_per_sample and format_tag the values used above are the defaults
+# The default sample rate is 44100 Hz.
+# For channels, bits_per_sample and format_tag the values used above are the defaults.
 
-# generate 1 second of full-scale white noise at 48 kHz
-data = array.array('h', (randrange(-32768, 32768) for i in range(48000)))
+with wav:
+    # Generate 1 second of full-scale white noise at 48 kHz.
+    data = array.array('h', (randrange(-32768, 32768) for i in range(48000)))
 
-# write to file
-wav.write(data)
-wav.close()
+    # write to file
+    wav.write(data)
+
+# Exiting the context calls wav.close() implicitly.
 ```
 
 

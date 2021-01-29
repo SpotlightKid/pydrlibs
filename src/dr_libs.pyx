@@ -81,6 +81,14 @@ cdef class DrWav:
             drwav_uninit(&self._wav)
             self._closed = True
 
+    # context manager support
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    # WAV properties
     @property
     def avg_bytes_per_sec(self):
         """Average bytes per second.
@@ -219,6 +227,7 @@ cdef class DrWav:
         """
         return self._wav.fmt.validBitsPerSample
 
+    # Input/output
     def read(self, drwav_uint64 nframes=0, sample_format fmt=sample_format.S32):
         """Read at most nframes sample frames from the input stream.
 

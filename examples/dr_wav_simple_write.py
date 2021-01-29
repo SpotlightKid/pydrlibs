@@ -23,17 +23,20 @@ def main():
         channels=1,
         sample_rate=48000,
         bits_per_sample=16,
-        format_tag=dr_libs.PCM)
+        format_tag=dr_libs.PCM
+    )
 
-    # default sample rate is 44100 Hz
-    # for channels, bits_per_sample and format_tag the values used above are the defaults
+    # The default sample rate is 44100 Hz.
+    # For channels, bits_per_sample and format_tag the values used above are the defaults.
 
-    # generate a 1 second sine wave at a frequency of 440 Hz and a sample rate of 48 kHz
-    data = array.array('h', (int(x*(2**16/2-1)) for x in one_sec_sine(amp=0.4)))
+    with wav:
+        # Generate a 1 second sine wave at a frequency of 440 Hz and a sample rate of 48 kHz
+        data = array.array('h', (int(x*(2**16/2-1)) for x in one_sec_sine(amp=0.4)))
 
-    # write to file
-    wav.write(data)
-    wav.close()
+        # write to file
+        wav.write(data)
+
+    # Exiting the context calls wav.close() implicitly.
 
 
 if __name__ == '__main__':
