@@ -18,7 +18,9 @@ $ python setup.py install --user  # or: sudo python setup.py install
 ```
 
 
-## Usage example:
+## Usage examples:
+
+### Reading a WAV file
 
 ```python
 import dr_libs
@@ -35,6 +37,34 @@ print(wav.nframes)
 # Channels are interleaved.
 data = wav.read(fmt=dr_libs.sample_format.F32)
 print(len(data))  # Should return (wav.nframes * wav.channels)
+```
+
+
+### Writing a WAV file
+
+```python
+import array
+from random import randrange
+
+import dr_libs
+
+wav = dr_libs.DrWav(
+    '/path/to/audio.wav',
+    mode='w',
+    channels=1,
+    sample_rate=48000,
+    bits_per_sample=16,
+    format_tag=dr_libs.PCM)
+
+# default sample rate is 44100 Hz
+# for channels, bits_per_sample and format_tag the values used above are the defaults
+
+# generate 1 second of full-scale white noise at 48 kHz
+data = array.array('h', (randrange(-32768, 32767) for i in range(48000)))
+
+# write to file
+wav.write(data)
+wav.close()
 ```
 
 
