@@ -59,11 +59,10 @@ cdef class DrWav:
             ret = drwav_init_file(&self._wav, filename.encode("utf-8"), NULL)
         elif mode == 'w':
             self._fmt.container = <drwav_container> container_format.RIFF
-            self._fmt.format = wave_format.PCM
+            self._fmt.format = format_tag
             self._fmt.channels = channels
             self._fmt.sampleRate = sample_rate
             self._fmt.bitsPerSample = bits_per_sample
-            self._format_tag = format_tag
             ret = drwav_init_file_write(&self._wav, filename.encode("utf-8"), &self._fmt, NULL)
         else:
             raise ValueError("Invalid mode '%s'." % mode)
@@ -285,9 +284,10 @@ cdef class DrWav:
 
     def write(self, array.array frames):
         cdef drwav_uint64 nframes = len(frames), frames_written
+        cdef wave_format tag = <wave_format>self._wav.fmt.formatTag
 
-        if frames.typecode in 'hi' and self._format_tag != wave_format.PCM:
-            raise TypeError("Invalid sample format for WAV format tag %r." % self._format_tag)
+        if frames.typecode in 'hi' and tag != wave_format.PCM:
+            raise TypeError("Invalid sample format for WAV format PCM.")
 
         if frames.typecode == 'h':
             frames_written = drwav_write_pcm_frames(&self._wav, nframes,
@@ -296,10 +296,13 @@ cdef class DrWav:
             frames_written = drwav_write_pcm_frames(&self._wav, nframes,
                                                     <const void*>frames.data.as_ints)
         elif frames.typecode == 'f':
+            if tag != wave_format.IEEE_FLOAT:
+                raise TypeError("Invalid sample format for WAV format IEEE_FLOAT.")
+
             frames_written = drwav_write_pcm_frames(&self._wav, nframes,
                                                     <const void*>frames.data.as_floats)
         else:
-            raise TypeError("Unsupported sample data format (typecode: %s)." % array.typecode)
+            raise TypeError("Unsupported sample data format (typecode: %s)." % frames.typecode)
 
         if frames_written != nframes:
             raise IOError("Truncated write, frames written: %d, expected: %d." %

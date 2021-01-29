@@ -126,3 +126,62 @@ def test_wav_write_mono_s16(one_sec_sine):
     assert wav.data_size == 96000
     assert wav.data_position == 44
     assert wav.nframes == 48000
+
+
+def test_wav_write_mono_s32(one_sec_sine):
+    os.makedirs(TEST_OUTPUT_DIR, exist_ok=True)
+    wav = dr_libs.DrWav(
+        join(TEST_OUTPUT_DIR, TEST_WAV_MONO_48_S32),
+        mode='w',
+        channels=1,
+        sample_rate=48000,
+        bits_per_sample=32)
+
+    assert wav.bits_per_sample == 32
+    assert wav.block_align == 4
+    assert wav.channels == 1
+    assert wav.container == dr_libs.container_format.RIFF
+    assert wav.format_tag == dr_libs.wave_format.PCM
+    assert wav.translated_format_tag == dr_libs.wave_format.PCM
+    assert wav.extended_size == 0
+    assert wav.valid_bits_per_sample == 0
+    assert wav.sub_format == b''
+    assert wav.sample_rate == 48000
+
+    data = array.array('i', (int(x*(2**32/2-1)) for x in one_sec_sine))
+    wav.write(data)
+    wav.close()
+
+    assert wav.data_size == 192000
+    assert wav.data_position == 44
+    assert wav.nframes == 48000
+
+
+def test_wav_write_mono_f32(one_sec_sine):
+    os.makedirs(TEST_OUTPUT_DIR, exist_ok=True)
+    wav = dr_libs.DrWav(
+        join(TEST_OUTPUT_DIR, TEST_WAV_MONO_48_F32),
+        mode='w',
+        channels=1,
+        sample_rate=48000,
+        bits_per_sample=32,
+        format_tag=dr_libs.wave_format.IEEE_FLOAT)
+
+    assert wav.bits_per_sample == 32
+    assert wav.block_align == 4
+    assert wav.channels == 1
+    assert wav.container == dr_libs.container_format.RIFF
+    assert wav.format_tag == dr_libs.wave_format.IEEE_FLOAT
+    assert wav.translated_format_tag == dr_libs.wave_format.IEEE_FLOAT
+    assert wav.extended_size == 0
+    assert wav.valid_bits_per_sample == 0
+    assert wav.sub_format == b''
+    assert wav.sample_rate == 48000
+
+    data = array.array('f', one_sec_sine)
+    wav.write(data)
+    wav.close()
+
+    assert wav.data_size == 192000
+    assert wav.data_position == 44
+    assert wav.nframes == 48000
