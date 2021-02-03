@@ -91,6 +91,24 @@ For running the unit tests:
 * [pytest] >= 3.0
 
 
+## Unit tests
+
+To run the unit tests against source directory, either:
+
+* Create a Python virtual environment and activate it.
+* Install the package into the virtualenv with `pip install -e .`.
+* Install `pytest` into the virtualenv with `pip install pytest`.
+* Run `pytest`
+
+or, without a virtualenv, Install `pytest` globally or for your user and then
+simply run `make test`. This will:
+
+* Build the extension module "in-place", i.e. will put it in the `dr_libs`
+  package directory.
+* Run `python -m pytest -v tests/`, which adds the current working dir to the
+  Python module search, so it will find the `dr_libs` package.
+
+
 ## License
 
 This software is released under the [MIT License](./LICENSE).
