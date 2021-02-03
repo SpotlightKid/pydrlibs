@@ -15,7 +15,7 @@ all:
 	@echo 'make install-user: install $(PROJECT) as current user to $(HOME)/.local'
 
 clean:
-	-rm -rf build/ $(PACKAGE)*.so $(PROJECT).egg-info tests/__pycache__
+	-rm -rf build/ $(PACKAGE)/*.so $(PROJECT).egg-info tests/__pycache__
 
 examples:
 	$(MAKE) -C examples

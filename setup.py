@@ -9,7 +9,8 @@ except ImportError:
     cythonize = None
 
 SRC_DIR = "src"
-MODULE = "dr_libs"
+PACKAGE = "dr_libs"
+MODULE = "dr_wav"
 
 # Set up options for compiling the Extension
 if cythonize:
@@ -23,7 +24,7 @@ else:
 
 extensions = [
     Extension(
-        MODULE,
+        PACKAGE + '.' + MODULE,
         sources=sources,
         language="c",
         define_macros=[('DR_WAV_IMPLEMENTATION', None)],
@@ -32,5 +33,6 @@ extensions = [
 ]
 
 setup(
+    packages=[PACKAGE],
     ext_modules=cythonize(extensions)
 )

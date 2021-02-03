@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 import sys
-import dr_libs
+from dr_libs import dr_wav
 
 
 def main():
     if len(sys.argv) < 2:
         return "usage: dr_wav_simple.py <WAV file>"
 
-    with dr_libs.DrWav(sys.argv[1]) as wav:
+    with dr_wav.DrWav(sys.argv[1]) as wav:
         print("'%s' has %d sample frames." % (sys.argv[1], wav.nframes))
         print("Each using %d channel(s)." % wav.channels)
         print("The sample rate is %d Hz." % wav.sample_rate)

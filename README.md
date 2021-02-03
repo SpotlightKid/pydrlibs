@@ -23,9 +23,9 @@ $ python setup.py install --user  # or: sudo python setup.py install
 ### Reading a WAV file
 
 ```python
-import dr_libs
+from dr_libs import dr_wav
 
-wav = dr_libs.DrWav('/path/to/audio.wav')
+wav = dr_wav.DrWav('/path/to/audio.wav')
 
 print(wav.sample_rate)
 print(wav.channels)
@@ -35,7 +35,7 @@ print(wav.nframes)
 # Read sample data as single-precision floats.
 # Returns array.array('f') instance.
 # Channels are interleaved.
-data = wav.read(fmt=dr_libs.sample_format.F32)
+data = wav.read(fmt=dr_wav.sample_format.F32)
 print(len(data))  # Should return (wav.nframes * wav.channels)
 ```
 
@@ -46,15 +46,15 @@ print(len(data))  # Should return (wav.nframes * wav.channels)
 import array
 from random import randrange
 
-import dr_libs
+from dr_libs import dr_wav
 
-wav = dr_libs.DrWav(
+wav = dr_wav.DrWav(
     'sine.wav',
     mode='w',
     channels=1,
     sample_rate=48000,
     bits_per_sample=16,
-    format_tag=dr_libs.PCM)
+    format_tag=dr_wav.PCM)
 
 # The default sample rate is 44100 Hz.
 # For channels, bits_per_sample and format_tag the values used above are the defaults.

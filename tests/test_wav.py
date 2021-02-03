@@ -5,7 +5,7 @@ from os.path import dirname, join
 
 import pytest
 
-import dr_libs
+from dr_libs import dr_wav
 
 
 TEST_INPUT_DIR = join(dirname(__file__), "input")
@@ -26,25 +26,25 @@ def one_sec_sine(freq=440.0, fs=48000):
 
 def test_wav_invalid_mode():
     with pytest.raises(ValueError, match="Invalid mode 'bogus'."):
-        wav = dr_libs.DrWav("dummy", mode='bogus')
+        wav = dr_wav.DrWav("dummy", mode='bogus')
 
 
 def test_wav_read():
-    wav = dr_libs.DrWav(join(TEST_INPUT_DIR, TEST_WAV_MONO_48_S16))
+    wav = dr_wav.DrWav(join(TEST_INPUT_DIR, TEST_WAV_MONO_48_S16))
 
     assert wav.avg_bytes_per_sec == 96000
     assert wav.bits_per_sample == 16
     assert wav.block_align == 2
     assert wav.channels == 1
-    assert wav.container == dr_libs.container_format.RIFF
+    assert wav.container == dr_wav.container_format.RIFF
     assert wav.data_position == 44
     assert wav.data_size == 96000
     assert wav.extended_size == 0
-    assert wav.format_tag == dr_libs.wave_format.PCM
+    assert wav.format_tag == dr_wav.wave_format.PCM
     assert wav.nframes == 48000
     assert wav.sample_rate == 48000
     assert wav.sub_format == b''
-    assert wav.translated_format_tag == dr_libs.wave_format.PCM
+    assert wav.translated_format_tag == dr_wav.wave_format.PCM
     assert wav.valid_bits_per_sample == 0
 
     data = wav.read()
@@ -57,9 +57,9 @@ def test_wav_read():
 
 
 def test_wav_read_s16():
-    wav = dr_libs.DrWav(join(TEST_INPUT_DIR, TEST_WAV_MONO_48_S16))
+    wav = dr_wav.DrWav(join(TEST_INPUT_DIR, TEST_WAV_MONO_48_S16))
 
-    data = wav.read(fmt=dr_libs.sample_format.S16)
+    data = wav.read(fmt=dr_wav.sample_format.S16)
 
     assert len(data) == 48000
     assert isinstance(data, array.array)
@@ -71,9 +71,9 @@ def test_wav_read_s16():
 
 
 def test_wav_read_s32():
-    wav = dr_libs.DrWav(join(TEST_INPUT_DIR, TEST_WAV_MONO_48_S16))
+    wav = dr_wav.DrWav(join(TEST_INPUT_DIR, TEST_WAV_MONO_48_S16))
 
-    data = wav.read(fmt=dr_libs.sample_format.S32)
+    data = wav.read(fmt=dr_wav.sample_format.S32)
 
     assert len(data) == 48000
     assert isinstance(data, array.array)
@@ -85,9 +85,9 @@ def test_wav_read_s32():
 
 
 def test_wav_read_f32():
-    wav = dr_libs.DrWav(join(TEST_INPUT_DIR, TEST_WAV_MONO_48_S16))
+    wav = dr_wav.DrWav(join(TEST_INPUT_DIR, TEST_WAV_MONO_48_S16))
 
-    data = wav.read(fmt=dr_libs.sample_format.F32)
+    data = wav.read(fmt=dr_wav.sample_format.F32)
 
     assert len(data) == 48000
     assert isinstance(data, array.array)
@@ -101,7 +101,7 @@ def test_wav_read_f32():
 
 def test_wav_write_mono_s16(one_sec_sine):
     os.makedirs(TEST_OUTPUT_DIR, exist_ok=True)
-    wav = dr_libs.DrWav(
+    wav = dr_wav.DrWav(
         join(TEST_OUTPUT_DIR, TEST_WAV_MONO_48_S16),
         mode='w',
         channels=1,
@@ -111,9 +111,9 @@ def test_wav_write_mono_s16(one_sec_sine):
     assert wav.bits_per_sample == 16
     assert wav.block_align == 2
     assert wav.channels == 1
-    assert wav.container == dr_libs.container_format.RIFF
-    assert wav.format_tag == dr_libs.wave_format.PCM
-    assert wav.translated_format_tag == dr_libs.wave_format.PCM
+    assert wav.container == dr_wav.container_format.RIFF
+    assert wav.format_tag == dr_wav.wave_format.PCM
+    assert wav.translated_format_tag == dr_wav.wave_format.PCM
     assert wav.extended_size == 0
     assert wav.valid_bits_per_sample == 0
     assert wav.sub_format == b''
@@ -130,7 +130,7 @@ def test_wav_write_mono_s16(one_sec_sine):
 
 def test_wav_write_mono_s32(one_sec_sine):
     os.makedirs(TEST_OUTPUT_DIR, exist_ok=True)
-    wav = dr_libs.DrWav(
+    wav = dr_wav.DrWav(
         join(TEST_OUTPUT_DIR, TEST_WAV_MONO_48_S32),
         mode='w',
         channels=1,
@@ -140,9 +140,9 @@ def test_wav_write_mono_s32(one_sec_sine):
     assert wav.bits_per_sample == 32
     assert wav.block_align == 4
     assert wav.channels == 1
-    assert wav.container == dr_libs.container_format.RIFF
-    assert wav.format_tag == dr_libs.wave_format.PCM
-    assert wav.translated_format_tag == dr_libs.wave_format.PCM
+    assert wav.container == dr_wav.container_format.RIFF
+    assert wav.format_tag == dr_wav.wave_format.PCM
+    assert wav.translated_format_tag == dr_wav.wave_format.PCM
     assert wav.extended_size == 0
     assert wav.valid_bits_per_sample == 0
     assert wav.sub_format == b''
@@ -159,20 +159,20 @@ def test_wav_write_mono_s32(one_sec_sine):
 
 def test_wav_write_mono_f32(one_sec_sine):
     os.makedirs(TEST_OUTPUT_DIR, exist_ok=True)
-    wav = dr_libs.DrWav(
+    wav = dr_wav.DrWav(
         join(TEST_OUTPUT_DIR, TEST_WAV_MONO_48_F32),
         mode='w',
         channels=1,
         sample_rate=48000,
         bits_per_sample=32,
-        format_tag=dr_libs.wave_format.IEEE_FLOAT)
+        format_tag=dr_wav.wave_format.IEEE_FLOAT)
 
     assert wav.bits_per_sample == 32
     assert wav.block_align == 4
     assert wav.channels == 1
-    assert wav.container == dr_libs.container_format.RIFF
-    assert wav.format_tag == dr_libs.wave_format.IEEE_FLOAT
-    assert wav.translated_format_tag == dr_libs.wave_format.IEEE_FLOAT
+    assert wav.container == dr_wav.container_format.RIFF
+    assert wav.format_tag == dr_wav.wave_format.IEEE_FLOAT
+    assert wav.translated_format_tag == dr_wav.wave_format.IEEE_FLOAT
     assert wav.extended_size == 0
     assert wav.valid_bits_per_sample == 0
     assert wav.sub_format == b''

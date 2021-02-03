@@ -5,7 +5,7 @@ import math
 import sys
 from random import randrange
 
-import dr_libs
+from dr_libs import dr_wav
 
 
 def one_sec_sine(freq=440.0, fs=48000, amp=1.0):
@@ -17,13 +17,13 @@ def main():
     if len(sys.argv) < 2:
         return "usage: dr_wav_simple_write.py <output file>"
 
-    wav = dr_libs.DrWav(
+    wav = dr_wav.DrWav(
         sys.argv[1],
         mode='w',
         channels=1,
         sample_rate=48000,
         bits_per_sample=16,
-        format_tag=dr_libs.PCM
+        format_tag=dr_wav.PCM
     )
 
     # The default sample rate is 44100 Hz.

@@ -1,8 +1,10 @@
-# dr_libs.pyx
+# dr_wav.pyx
 #
 # cython: language_level=3
 
 from cpython cimport array
+from dr_wav cimport *
+
 import array
 
 

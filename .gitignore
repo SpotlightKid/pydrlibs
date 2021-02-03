@@ -1,14 +1,65 @@
-build/
-dist/
-*.egg-info
-*.dist-info
-__pycache__
-*.py[do]
-src/dr_libs.c
-examples/dr_wav_simple
+# Cython output
+src/dr_wav.c
+
+# binaries
 dr_libs*.dll
 dr_libs*.pyd
 dr_libs*.so
+examples/dr_wav_simple
 
 # test output data
 tests/output
+
+# Python bytecode
+*.py[cod]
+__pycache__
+
+src/_rtmidi.cpp
+
+# C extensions
+*.so
+
+# Generated documentation
+#INSTALL.rst
+
+# Packages
+*.egg
+*.egg-info
+*.dist-info
+dist/
+build/
+*.eggs/
+eggs/
+parts/
+.installed.cfg
+setuptools-*.tar.gz
+MANIFEST
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.cache/
+.coverage
+.pytest_cache/
+.tox/
+nosetests.xml
+htmlcov
+
+# Translations
+*.mo
+
+# Misc IDEs
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Complexity
+output/*.html
+output/*/index.html
+
+# Sphinx
+docs/_build
+
+# Geany project
+pydrlibs.geany

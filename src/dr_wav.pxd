@@ -1,4 +1,4 @@
-# dr_libs.pxd
+# dr_wav.pxd
 #
 # cython: language_level=3
 
