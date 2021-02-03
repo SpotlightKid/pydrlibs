@@ -1,0 +1,20 @@
+This is a small new project of mine.
+
+I started a Python wrapper for the dr_libs audio decoding libraries:
+
+https://github.com/SpotlightKid/pydrlibs
+
+atm, only wav reading functionality is wrapped, but I plan to add wav writing
+and flac and mp3 support.
+
+This is mainly an exercise for me to experiment with packaging Python projects
+using Cython, but maybe it will be useful to somebody sometime.
+
+When it's more complete I'll also plan some feature / performance comparisons
+with [python-soundfile].
+
+For now the main difference is: the latter uses cffi and needs libsndfile
+installed at runtime, while pydrlibs needs to be compiled but at run-time only
+needs Python.
+
+[python-soundfile]: https://github.com/bastibe/python-soundfile
