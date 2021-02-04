@@ -28,7 +28,7 @@ extensions = [
         sources=sources,
         language="c",
         define_macros=[('DR_WAV_IMPLEMENTATION', None)],
-        include_dirs=join(SRC_DIR, "dr_libs")
+        include_dirs=[join(SRC_DIR, "dr_libs")]
     )
 ]
 
