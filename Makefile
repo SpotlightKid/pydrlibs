@@ -6,8 +6,14 @@ PYTHON ?= python3
 TESTDIR ?= tests
 TWINE ?= twine
 
+SOURCES = \
+	src/dr_wav.c \
+	src/dr_libs/dr_wav.h
+
 PATCHES = \
 	patches/dr_wav_data_pos.patch
+
+src/dr_wav.c: src/dr_wav.pyx src/dr_wav.pxd
 
 .PHONY: all build clean dist examples install install-user lint patch sdist
 
@@ -25,7 +31,12 @@ all:
 
 
 clean:
-	-rm -rf build/ $(PACKAGE)/*.so $(PROJECT).egg-info tests/__pycache__
+	-rm -rf build/ \
+	    src/dr_wav.c \
+	    $(PROJECT).egg-info \
+	    $(PACKAGE)/*.so \
+	    $(PACKAGE)/__pycache__ \
+	    $(TESTDIR)/__pycache__
 
 examples:
 	$(MAKE) -C examples
@@ -39,7 +50,7 @@ patch: $(PATCHES)
 		patch -d src/dr_libs -r - -p1 -N -i ../../$${p}; \
 	done
 
-build: patch
+build: patch $(SOURCES)
 	$(PYTHON) setup.py build
 
 test: patch
