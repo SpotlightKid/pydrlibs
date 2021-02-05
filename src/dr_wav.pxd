@@ -38,6 +38,37 @@ cdef extern from "dr_libs/dr_wav.h":
 
     # Note: some fields not actually used in Cython are left un-declared.
 
+    cdef union chunk_id:
+        drwav_uint8 fourcc[4]
+        drwav_uint8 guid[16]
+
+    ctypedef struct drwav_chunk_header:
+        chunk_id id
+        drwav_uint64 sizeInBytes
+        unsigned int paddingSize
+
+    ctypedef struct drwav_smpl_loop:
+        drwav_uint32 cuePointId
+        drwav_uint32 type
+        drwav_uint32 start
+        drwav_uint32 end
+        drwav_uint32 fraction
+        drwav_uint32 playCount
+
+    cdef const int DRWAV_MAX_SMPL_LOOPS
+
+    ctypedef struct drwav_smpl:
+        drwav_uint32 manufacturer
+        drwav_uint32 product
+        drwav_uint32 samplePeriod
+        drwav_uint32 midiUnityNotes
+        drwav_uint32 midiPitchFraction
+        drwav_uint32 smpteFormat
+        drwav_uint32 smpteOffset
+        drwav_uint32 numSampleLoops
+        drwav_uint32 samplerData
+        drwav_smpl_loop loops[DRWAV_MAX_SMPL_LOOPS];
+
     # Structure containing format information exactly as specified by the wav file.
     ctypedef struct drwav_fmt:
         drwav_uint16 formatTag
@@ -71,6 +102,8 @@ cdef extern from "dr_libs/dr_wav.h":
         drwav_allocation_callbacks allocationCallbacks
         drwav_container container
         drwav_fmt fmt
+        # smpl chunk
+        drwav_smpl smpl
         drwav_uint32 sampleRate
         drwav_uint16 channels
         drwav_uint16 bitsPerSample
@@ -78,6 +111,11 @@ cdef extern from "dr_libs/dr_wav.h":
         drwav_uint64 totalPCMFrameCount
         drwav_uint64 dataChunkDataSize
         drwav_uint64 dataChunkDataPos
+
+    ctypedef drwav_uint64 (* drwav_chunk_proc)(void* pChunkUserData, drwav_read_proc onRead,
+                           drwav_seek_proc onSeek, void* pReadSeekUserData,
+                           const drwav_chunk_header* pChunkHeader, drwav_container container,
+                           const drwav_fmt* pFMT)
 
     # Functions from the API we want to call using the types declared above
     drwav_bool32 drwav_init(
@@ -89,6 +127,13 @@ cdef extern from "dr_libs/dr_wav.h":
     drwav_bool32 drwav_init_file(
         drwav* pWav,
         const char* filename,
+        const drwav_allocation_callbacks* pAllocationCallbacks)
+    drwav_bool32 drwav_init_file_ex(
+        drwav* pWav,
+        const char* filename,
+        drwav_chunk_proc onChunk,
+        void* pChunkUserData,
+        drwav_uint32 flags,
         const drwav_allocation_callbacks* pAllocationCallbacks)
     drwav_bool32 drwav_init_write(
         drwav* pWav,

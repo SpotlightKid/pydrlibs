@@ -3,6 +3,8 @@
 # cython: language_level=3
 
 from cpython cimport array
+#from libc.stdlib cimport free, malloc
+from cpython.mem cimport PyMem_Free, PyMem_Malloc
 from dr_wav cimport *
 
 import array
@@ -40,6 +42,47 @@ cpdef enum wave_format:
     EXTENSIBLE = 0xFFFE
 
 
+cdef drwav_uint64 _on_chunk_cb(
+        void* user_data, drwav_read_proc on_read,
+        drwav_seek_proc on_seek, void* read_seek_user_data,
+        const drwav_chunk_header* chunk_header, drwav_container container,
+        const drwav_fmt* fmt
+    ):
+    """Wrapper for a Python callback function for onChunk."""
+    cdef char* data
+    cdef size_t b_read
+    cdef bytes chunk_id, chunk
+
+    if container == drwav_container_riff or container == drwav_container_rf64:
+        chunk_id = chunk_header.id.fourcc[:4]
+    else:
+        chunk_id = chunk_header.id.guid[:16]
+
+    if chunk_id != b'data':
+        data = <char *>PyMem_Malloc(chunk_header.sizeInBytes)
+        if not data:
+            raise MemoryError("Could not allocate memory for chunk")
+
+        try:
+            b_read = on_read(read_seek_user_data, data, chunk_header.sizeInBytes)
+
+            if b_read == chunk_header.sizeInBytes:
+                # recover Python object instance from void* pointer
+                self = <object>user_data
+                # make copy of chunk data memory as Python bytes object
+                chunk = data[:chunk_header.sizeInBytes]
+                self._on_chunk_callback(chunk_id, chunk)
+            else:
+                raise IOError("Error reading chunk '%s'. Expected %d bytes, read %s." %
+                              chunk_id.encode(), chunk_header.sizeInBytes, b_read)
+        finally:
+            PyMem_Free(data)
+
+            return b_read
+
+    return 0
+
+
 cdef class DrWav:
     # C-level instance attributes
     cdef:
@@ -57,15 +100,17 @@ cdef class DrWav:
         drwav_uint32 bits_per_sample=16,
         wave_format format_tag=wave_format.PCM
     ):
+        bfilename = filename.encode("utf-8")
+
         if mode == 'r':
-            ret = drwav_init_file(&self._wav, filename.encode("utf-8"), NULL)
+            ret = drwav_init_file_ex(&self._wav, bfilename, &_on_chunk_cb, <void *>self, 0, NULL)
         elif mode == 'w':
             self._fmt.container = <drwav_container> container_format.RIFF
             self._fmt.format = format_tag
             self._fmt.channels = channels
             self._fmt.sampleRate = sample_rate
             self._fmt.bitsPerSample = bits_per_sample
-            ret = drwav_init_file_write(&self._wav, filename.encode("utf-8"), &self._fmt, NULL)
+            ret = drwav_init_file_write(&self._wav, bfilename, &self._fmt, NULL)
         else:
             raise ValueError("Invalid mode '%s'." % mode)
 
@@ -90,12 +135,17 @@ cdef class DrWav:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
+    # callbacks
+    def _on_chunk_callback(self, chunk_id, data):
+        # TODO: parse special chunks, e.g. 'cue '
+        print(chunk_id, data)
+
     # WAV properties
     @property
     def avg_bytes_per_sec(self):
         """Average bytes per second.
 
-        Approx. sample_rate * block_align. Only for informational purposes.
+        Approx. ``sample_rate * block_align``. Only for informational purposes.
 
         """
         return self._wav.fmt.avgBytesPerSec
@@ -184,6 +234,11 @@ cdef class DrWav:
         return self._wav.fmt.formatTag
 
     @property
+    def loops(self):
+        return [self._wav.smpl.loops[x]
+                for x in range(min(DRWAV_MAX_SMPL_LOOPS, self._wav.smpl.numSampleLoops))]
+
+    @property
     def nframes(self):
         """The total number of PCM frames making up the audio data."""
         return self._wav.totalPCMFrameCount
@@ -196,6 +251,11 @@ cdef class DrWav:
 
         """
         return self._wav.sampleRate
+
+    @property
+    def smpl(self):
+        """The smpl chunk."""
+        return self._wav.smpl
 
     @property
     def sub_format(self):
@@ -327,8 +387,8 @@ cdef class DrWav:
 
         Returns ``True`` if successful; ``False`` otherwise.
 
-        Raises ``IOError`` when the underlying instance is closed, i.e.
-        the ``close()`` was already called on it.
+        Raises ``IOError`` when the underlying stream is closed, i.e.
+        the ``close()`` method was already called on the instance.
 
         """
         if self._closed:

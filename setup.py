@@ -27,7 +27,10 @@ extensions = [
         PACKAGE + '.' + MODULE,
         sources=sources,
         language="c",
-        define_macros=[('DR_WAV_IMPLEMENTATION', None)],
+        define_macros=[
+            ('DR_WAV_IMPLEMENTATION', None),
+            ('DRWAV_MAX_SMPL_LOOPS', 10),
+        ],
         include_dirs=[join(SRC_DIR, "dr_libs")]
     )
 ]
