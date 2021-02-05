@@ -1,10 +1,10 @@
 # Cython output
 src/dr_wav.c
 
-# binaries
-dr_libs*.dll
-dr_libs*.pyd
-dr_libs*.so
+# C extensions & binaries
+dr_wav*.dll
+dr_wav*.pyd
+dr_wav*.so
 examples/dr_wav_simple
 
 # test output data
@@ -13,11 +13,6 @@ tests/output
 # Python bytecode
 *.py[cod]
 __pycache__
-
-src/_rtmidi.cpp
-
-# C extensions
-*.so
 
 # Generated documentation
 #INSTALL.rst
