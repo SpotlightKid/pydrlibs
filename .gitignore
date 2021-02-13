@@ -1,3 +1,6 @@
+# Binary wheel
+pydrlibs-*.whl
+
 # Cython output
 src/dr_wav.c
 

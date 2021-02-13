@@ -2,7 +2,7 @@
 #
 # cython: language_level=3
 
-cdef extern from "dr_libs/dr_wav.h":
+cdef extern from "dr_wav.h":
     # custom types
     ctypedef unsigned char drwav_uint8
     ctypedef signed short drwav_int16
