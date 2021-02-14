@@ -20,7 +20,12 @@ author = "Christopher Arndt "
 author-email = "chris@chrisarndt.de"
 summary = "Python bindings for dr_libs audio decoding libraries"
 home-page = "https://github.com/SpotlightKid/pydrlibs"
-meson-python-option-name = "python3"
+description-file = "README.md"
+# field not supported by mesonpep517 yet
+#license = "MIT License"
+# results in binary wheel being wrongly tagged with architecture 'any'
+# also this field is not in PEP621, should we even include it?
+#platforms = "any"
 requires-python = ">= 3.6"
 classifiers = [
     "Development Status :: 2 - Alpha",
@@ -39,3 +44,22 @@ classifiers = [
     "Topic :: Multimedia :: Sound/Audio",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
+meson-python-option-name = "python3"
+
+
+[tool.flake8]
+ignore = "E116, E265, E266, E731, W504"
+max-line-length = 100
+
+
+[tool.isort]
+ensure_newline_before_comments = true
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 99
+multi_line_output = 3
+use_parentheses = true
+
+
+[tool.black]
+line-length = 99
