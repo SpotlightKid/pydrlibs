@@ -3,7 +3,6 @@
 import array
 import math
 import sys
-from random import randrange
 
 from dr_libs import dr_wav
 
@@ -19,11 +18,11 @@ def main():
 
     wav = dr_wav.DrWav(
         sys.argv[1],
-        mode='w',
+        mode="w",
         channels=1,
         sample_rate=48000,
         bits_per_sample=16,
-        format_tag=dr_wav.PCM
+        format_tag=dr_wav.PCM,
     )
 
     # The default sample rate is 44100 Hz.
@@ -31,7 +30,7 @@ def main():
 
     with wav:
         # Generate a 1 second sine wave at a frequency of 440 Hz and a sample rate of 48 kHz
-        data = array.array('h', (int(x*(2**16/2-1)) for x in one_sec_sine(amp=0.4)))
+        data = array.array("h", (int(x * (2 ** 16 / 2 - 1)) for x in one_sec_sine(amp=0.4)))
 
         # write to file
         wav.write(data)
@@ -39,5 +38,5 @@ def main():
     # Exiting the context calls wav.close() implicitly.
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main() or 0)

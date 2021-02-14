@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 from os.path import exists, join
+
 from setuptools import Extension, setup
 
 try:
     from Cython.Build import cythonize
 except ImportError:
     cythonize = None
+
 
 SRC_DIR = "src"
 PACKAGE = "dr_libs"
