@@ -2,12 +2,12 @@
 #
 # cython: language_level=3
 
-from cpython cimport array
-
-from cpython.mem cimport PyMem_Free, PyMem_Malloc
-from dr_wav cimport *
-
 import array
+
+from cpython cimport array
+from cpython.mem cimport PyMem_Free, PyMem_Malloc
+
+from dr_wav cimport *
 
 
 cpdef enum container_format:

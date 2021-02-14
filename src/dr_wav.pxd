@@ -55,7 +55,7 @@ cdef extern from "dr_libs/dr_wav.h":
         drwav_uint32 fraction
         drwav_uint32 playCount
 
-    cdef const int DRWAV_MAX_SMPL_LOOPS
+    cdef const drwav_uint32 DRWAV_MAX_SMPL_LOOPS
 
     ctypedef struct drwav_smpl:
         drwav_uint32 manufacturer
