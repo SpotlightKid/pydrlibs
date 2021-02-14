@@ -3,7 +3,7 @@
 # cython: language_level=3
 
 from cpython cimport array
-#from libc.stdlib cimport free, malloc
+
 from cpython.mem cimport PyMem_Free, PyMem_Malloc
 from dr_wav cimport *
 
