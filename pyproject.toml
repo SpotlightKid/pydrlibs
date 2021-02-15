@@ -20,12 +20,12 @@ author = "Christopher Arndt "
 author-email = "chris@chrisarndt.de"
 summary = "Python bindings for dr_libs audio decoding libraries"
 home-page = "https://github.com/SpotlightKid/pydrlibs"
+project-urls = [
+    "Source, https://github.com/SpotlightKid/pydrlibs",
+]
 description-file = "README.md"
 # field not supported by mesonpep517 yet
-#license = "MIT License"
-# results in binary wheel being wrongly tagged with architecture 'any'
-# also this field is not in PEP621, should we even include it?
-#platforms = "any"
+license = "MIT License"
 requires-python = ">= 3.6"
 classifiers = [
     "Development Status :: 2 - Alpha",
